@@ -36,7 +36,7 @@
         name: ldap-srv
 
     - name: initial ldif file is copied
-      copy:
+      template:
         src: slapd.ldif
         dest: /etc/openldap/slapd.ldif
         owner: ldap

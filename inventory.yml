@@ -3,4 +3,5 @@ all:
     localhost:
       ansible_port: <your port>
       ansible_host: <your ip address>
-      root_hash_pass: <hashed password for root>
+      root_hash_pass: <the hashed root password as in shadow files>
+      ldap_suffix: <the domain ldap suffix>

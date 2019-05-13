@@ -131,7 +131,7 @@ dn: olcDatabase=monitor,cn=config
 objectClass: olcDatabaseConfig
 olcDatabase: monitor
 olcAccess: to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,c
- n=auth" read by dn.base="cn=Manager,dc=epsi,dc=intra" read by * none
+ n=auth" read by dn.base="cn=Manager,{{ ldap_suffix }}" read by * none
 
 #
 # Backend database definitions
@@ -141,8 +141,8 @@ dn: olcDatabase=hdb,cn=config
 objectClass: olcDatabaseConfig
 objectClass: olcHdbConfig
 olcDatabase: hdb
-olcSuffix: dc=epsi,dc=intra
-olcRootDN: cn=Manager,dc=epsi,dc=intra
+olcSuffix: {{ ldap_suffix }}
+olcRootDN: cn=Manager,{{ ldap_suffix }}
 olcDbDirectory:	/var/lib/ldap
 olcDbIndex: objectClass eq,pres
 olcDbIndex: ou,cn,mail,surname,givenname eq,pres,sub
