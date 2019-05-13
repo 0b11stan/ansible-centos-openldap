@@ -1,0 +1,68 @@
+---
+- hosts: all
+  handlers:
+
+    - name: slapd is restarted
+      service:
+        name: slapd
+        enabled: true
+        state: restarted
+
+  tasks:
+
+    - name: all packages are up to date
+      yum:
+        name: '*'
+        state: latest
+
+    - name: required packages are installed
+      package:
+        name:
+          - openldap
+          - compat-openldap
+          - openldap-servers
+          - openldap-servers-sql
+          - openldap-clients
+          - openldap-devel
+          - vim
+
+    - name: root have a strong password
+      user:
+        name: root
+        password: "{{ root_hash_pass }}"
+
+    - name: hostname is changed
+      hostname:
+        name: ldap-srv
+
+    - name: initial ldif file is copied
+      copy:
+        src: slapd.ldif
+        dest: /etc/openldap/slapd.ldif
+        owner: ldap
+        group: ldap
+        mode: 0640
+      register: ldif_copy
+      notify: slapd is restarted
+
+    - name: default ldap database is destroyed
+      file:
+        name: /etc/openldap/slapd.d
+        state: absent
+      when: ldif_copy.changed
+
+    - name: ldap database directory exist
+      file:
+        name: /etc/openldap/slapd.d
+        state: directory
+        owner: ldap
+        group: ldap
+        mode: 0750
+
+    - name: ldap database is generated
+      become: true
+      become_user: ldap
+      command: slapadd -n 0 -F /etc/openldap/slapd.d -l /etc/openldap/slapd.ldif
+      args:
+        creates: /etc/openldap/slapd.d/cn=config.ldif
+      notify: slapd is restarted

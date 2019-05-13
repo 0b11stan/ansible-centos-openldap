@@ -1,0 +1,6 @@
+all:
+  hosts:
+    localhost:
+      ansible_port: <your port>
+      ansible_host: <your ip address>
+      root_hash_pass: <hashed password for root>
