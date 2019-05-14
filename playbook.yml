@@ -24,6 +24,7 @@
           - openldap-servers-sql
           - openldap-clients
           - openldap-devel
+          - python-ldap
           - vim
 
     - name: root have a strong password
@@ -66,3 +67,22 @@
       args:
         creates: /etc/openldap/slapd.d/cn=config.ldif
       notify: slapd is restarted
+
+    - name: ldap has a root organization
+      ldap_entry:
+        dn: dc=epsi,dc=intra
+        objectClass:
+          - dcObject
+          - organization
+        attributes:
+          o: EPSI
+          dc: epsi
+
+    - name: ldap has a Manager role
+      ldap_entry:
+        dn: cn=Manager,dc=epsi,dc=intra
+        objectClass: organizationalRole
+        attributes:
+          cn: Manager
+
+

@@ -143,6 +143,7 @@ objectClass: olcHdbConfig
 olcDatabase: hdb
 olcSuffix: {{ ldap_suffix }}
 olcRootDN: cn=Manager,{{ ldap_suffix }}
+olcRootPW: {{ ldap_root_secret }}
 olcDbDirectory:	/var/lib/ldap
 olcDbIndex: objectClass eq,pres
 olcDbIndex: ou,cn,mail,surname,givenname eq,pres,sub

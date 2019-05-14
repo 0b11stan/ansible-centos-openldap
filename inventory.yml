@@ -5,3 +5,4 @@ all:
       ansible_host: <your ip address>
       root_hash_pass: <the hashed root password as in shadow files>
       ldap_suffix: <the domain ldap suffix>
+      ldap_root_secret: <the ldap secret for root>
