@@ -1,20 +1,27 @@
 ---
 - hosts: all
-  handlers:
-
-    - name: slapd is restarted
-      service:
-        name: slapd
-        enabled: true
-        state: restarted
 
   tasks:
-
+    # CENTOS
     - name: all packages are up to date
       yum:
         name: '*'
         state: latest
 
+    - name: initial packages are installed
+      package:
+        name: vim
+    
+    - name: root have a strong password
+      user:
+        name: root
+        password: "{{ root_hash_pass }}"
+
+    - name: hostname is changed
+      hostname:
+        name: ldap-srv
+
+    # OPENLDAP
     - name: required packages are installed
       package:
         name:
@@ -25,16 +32,6 @@
           - openldap-clients
           - openldap-devel
           - python-ldap
-          - vim
-
-    - name: root have a strong password
-      user:
-        name: root
-        password: "{{ root_hash_pass }}"
-
-    - name: hostname is changed
-      hostname:
-        name: ldap-srv
 
     - name: initial ldif file is copied
       template:
@@ -44,7 +41,6 @@
         group: ldap
         mode: 0640
       register: ldif_copy
-      notify: slapd is restarted
 
     - name: default ldap database is destroyed
       file:
@@ -66,10 +62,19 @@
       command: slapadd -n 0 -F /etc/openldap/slapd.d -l /etc/openldap/slapd.ldif
       args:
         creates: /etc/openldap/slapd.d/cn=config.ldif
-      notify: slapd is restarted
+      register: database_generation
+
+    - name: slapd service is started
+      service:
+        name: slapd
+        enabled: true
+        state: restarted
+      when: database_generation.changed or ldif_copy.changed
 
     - name: ldap has a root organization
       ldap_entry:
+        bind_dn: cn=Manager,dc=epsi,dc=intra
+        bind_pw: "{{ ldap_root_secret }}"
         dn: dc=epsi,dc=intra
         objectClass:
           - dcObject
@@ -80,6 +85,8 @@
 
     - name: ldap has a Manager role
       ldap_entry:
+        bind_dn: cn=Manager,dc=epsi,dc=intra
+        bind_pw: "{{ ldap_root_secret }}"
         dn: cn=Manager,dc=epsi,dc=intra
         objectClass: organizationalRole
         attributes:
