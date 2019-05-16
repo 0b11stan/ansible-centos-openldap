@@ -92,4 +92,26 @@
         attributes:
           cn: Manager
 
+    - name: make sure we have a parent entry for users
+      ldap_entry:
+        bind_dn: cn=Manager,dc=epsi,dc=intra
+        bind_pw: "{{ ldap_root_secret }}"
+        dn: ou=users,dc=epsi,dc=intra
+        objectClass: organizationalUnit
 
+    - name: ldap has a User Tux
+      ldap_entry:
+        bind_dn: cn=Manager,dc=epsi,dc=intra
+        bind_pw: "{{ ldap_root_secret }}"
+        dn: cn=tux,ou=users,dc=epsi,dc=intra
+        objectClass: person
+        attributes:
+          cn: Tux
+          sn: Tuz
+
+    - name: ldap password is set for Tux
+      ldap_passwd:
+        bind_dn: cn=Manager,dc=epsi,dc=intra
+        bind_pw: "{{ ldap_root_secret }}"
+        dn: cn=tux,ou=users,dc=epsi,dc=intra
+        passwd: okpass

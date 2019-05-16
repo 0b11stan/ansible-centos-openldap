@@ -1,0 +1,8 @@
+all:
+  hosts:
+    localhost:
+      ansible_port: 2001
+      ansible_host: 127.0.0.1
+      root_hash_pass: $6$GhSymavWCb370DRJ$l8buyV3JntEYBdDjJRmJfLlNUERxUnfEY9.0Grr5KtB/9SEjZaDHMPQlAClXuxYHReycd..WrbdJ0uCOeaf2v1
+      ldap_suffix: dc=epsi,dc=intra
+      ldap_root_secret: P@ssw0rd
