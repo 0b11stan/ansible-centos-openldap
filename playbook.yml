@@ -1,6 +1,12 @@
 ---
 - hosts: all
 
+  handlers:
+    - name: ssh server is restarted
+      service:
+        name: sshd
+        state: restarted
+
   tasks:
     # CENTOS
     - name: all packages are up to date
@@ -37,6 +43,20 @@
       copy:
         src: export-iptables
         dest: /etc/sysconfig/iptables
+
+    - name: configure ssh
+      template:
+        src: sshd_config
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: 0600
+      notify: ssh server is restarted
+
+    # add user manager
+    # add it to sshuser group
+    #
+    # TODO : ajouter règles sortantes http https et ntp
 
     # OPENLDAP
     - name: required packages are installed

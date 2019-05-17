@@ -1,0 +1,18 @@
+# ListenAddress ipv4:port
+AddressFamily inet
+Port {{ ssh_port }}
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+PermitEmptyPasswords no
+X11Forwarding no
+PermitRootLogin no
+UsePAM no
+PubkeyAuthentication yes
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+IgnoreRhosts yes
+MaxAuthTries 3
+Protocol 2
+MaxSessions 2
+LoginGraceTime 2m
+AllowGroups {{ ssh_users_group }}
