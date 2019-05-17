@@ -21,6 +21,23 @@
       hostname:
         name: ldap-srv
 
+    - name: firewalld is disable
+      service:
+        name: firewalld
+        enabled: false
+        state: stopped
+
+    - name: iptables rules are restored on startup
+      cron:
+        name: configure iptables
+        reboot: true
+        job: /sbin/iptables-restore < /etc/sysconfig/iptables
+
+    - name: iptables export is copied
+      copy:
+        src: export-iptables
+        dest: /etc/sysconfig/iptables
+
     # OPENLDAP
     - name: required packages are installed
       package:
